@@ -15,3 +15,6 @@ Here is a list of what I want to work on next.
 - Add multithreading to parse html as other pages are scraped.
 - Add logging
 - Add better page caching to avoid scraping urls every time the scraper runs. 
+
+## Other potential additions
+- Language support outside en-US

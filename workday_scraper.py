@@ -1,5 +1,6 @@
 import os
 from bs4 import BeautifulSoup
+import re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -36,10 +37,10 @@ class WorkdayScraper:
             The class used for the next button or an empty string if there is no next button.
         """
         # Get the nav elements responsible for controlling the page
-        for nav in soup.find_all("nav", attrs={"aria-label": "pagination"}):
+        for nav in soup.find_all("nav", attrs={'aria-label': 'pagination'}):
             # Check all buttons for a next button
             for button in nav.find_all('button'):
-                if button.has_attr('aria-label') and button["aria-label"] == "next":
+                if button.has_attr('aria-label') and button['aria-label'] == 'next':
                     if button.has_attr('class'):
                         return button['class'][0]
         return ''
@@ -63,10 +64,10 @@ class WorkdayScraper:
         time.sleep(3)
         for element in page_nav_elements:
             # This check needed because previous and next buttons have the same class
-            if element.get_attribute("aria-label") == "next":
+            if element.get_attribute('aria-label') == 'next':
                 element.click()
                 return
-        raise ValueError('Next button specified but not found')
+        raise ValueError("Next button specified but not found")
 
     def scrape(self, url:str, cache_path:str=None):
         """Scrape all pages of a specified workday site.
@@ -86,7 +87,7 @@ class WorkdayScraper:
             time.sleep(3) # TODO implement better wait strategy
             # get page html
             html = self.__driver.page_source
-            soup = BeautifulSoup(html, features="html.parser")
+            soup = BeautifulSoup(html, features='html.parser')
             page_count += 1
 
             # save current page
@@ -97,6 +98,7 @@ class WorkdayScraper:
                     f.write(html)
 
             # TODO potentially parse html here. 
+            print(self.__parse_job_urls(html))
 
             # check for / navigate to next page
             next_class = self.__get_next_page_class(soup)
@@ -106,6 +108,38 @@ class WorkdayScraper:
                 print("No next button detected. Scraping complete")
                 print(f"Scraped {page_count} pages.")
                 break
+
+    def __parse_job_urls(self, html:str):
+        """Parse a workday page for a list of links to positions
+
+        Parameters
+        ----------
+        html : str
+            The Workday page html content to be parsed.
+        
+        Returns
+        -------
+        job_urls : list
+            A list of urls to positions posted by the company.
+        """
+
+        soup = BeautifulSoup(html, features='html.parser')
+
+        # Get canonical url
+        canonical_tag = soup.find('link', attrs={'rel': 'canonical'})
+        if canonical_tag == None:
+            raise Exception('No canonical link in html detected.')
+        assert(canonical_tag.has_attr('href'))
+        url = canonical_tag['href']
+        base_url = re.search(r'^.*myworkdayjobs.com', url).group()
+
+        # Parse all links to position pages
+        job_urls = []
+        for job_tag in soup.find_all('a', attrs={'data-automation-id': 'jobTitle'}):
+            assert(job_tag.has_attr('href'))
+            job_urls.append(base_url + job_tag['href'])
+
+        return job_urls
 
     def close_driver(self):
         """Close the webdriver used by the scraper."""
