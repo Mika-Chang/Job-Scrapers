@@ -1,4 +1,4 @@
-# WorkdayScraper
+# job-scrape
 
 This is a project that can pull jobs from workday careers pages. I'm hoping to eventually set up a program to update me within a day of jobs at companies I want to work at. 
 
