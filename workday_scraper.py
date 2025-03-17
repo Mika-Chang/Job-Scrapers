@@ -1,6 +1,8 @@
 import os
 from bs4 import BeautifulSoup
+import json
 import re
+import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -40,18 +42,24 @@ class WorkdayScraper:
         Parameters
         ----------
         soup : bs4.BeautifulSoup
-            A beautiful soup object created from the html page to search for a next button
+            A beautiful soup object created from the html page to search
+            for a next button
         
         Returns
         -------
         str
-            The class used for the next button or an empty string if there is no next button.
+            The class used for the next button or an empty string if there is
+            no next button.
         """
         # Get the nav elements responsible for controlling the page
         for nav in soup.find_all("nav", attrs={'aria-label': 'pagination'}):
             # Check all buttons for a next button
             for button in nav.find_all('button'):
-                if button.has_attr('aria-label') and button['aria-label'] == 'next':
+                # TODO improve formatting here
+                if (
+                        button.has_attr('aria-label') and
+                        button['aria-label'] == 'next'
+                    ):
                     if button.has_attr('class'):
                         return button['class'][0]
         return ''
@@ -93,6 +101,9 @@ class WorkdayScraper:
         page_count = 0
 
         self.__driver.get(url)
+        
+        # TODO add error handling
+        jobs = []
         while True:
             next_class = None
             time.sleep(3) # TODO implement better wait strategy
@@ -108,10 +119,12 @@ class WorkdayScraper:
                         'w+', encoding='utf-8') as f:
                     f.write(html)
 
-            # TODO potentially parse html here. 
-            print(self.__parse_job_urls(html))
+            # Parse html on the current job listing page 
+            job_urls = self.__parse_job_urls(html)
+            for job_url in job_urls:
+                jobs.append(self.__scrape_job_info(job_url))
 
-            # check for / navigate to next page
+            # Check for / navigate to next page
             next_class = self.__get_next_page_class(soup)
             if next_class != '':
                 self.__next_page(next_class)
@@ -119,6 +132,8 @@ class WorkdayScraper:
                 print("No next button detected. Scraping complete")
                 print(f"Scraped {page_count} pages.")
                 break
+        
+        return jobs
 
     def __parse_job_urls(self, html:str):
         """Parse a workday page for a list of links to positions
@@ -151,6 +166,60 @@ class WorkdayScraper:
             job_urls.append(base_url + job_tag['href'])
 
         return job_urls
+    
+    def __parse_job_seo_tags(self, seo_tags):
+        """Parse the SEO tags of a specific job posting"""
+        return {
+            'title': seo_tags['title'],
+            'job_id': seo_tags['identifier']['value'],
+            'date': seo_tags['datePosted'],
+            'employment_type': seo_tags['employmentType'],
+            'description': seo_tags['description'],
+            'country': seo_tags['jobLocation']['address']['addressCountry'],
+            'city': seo_tags['jobLocation']['address']['addressLocality']
+        }
+
+    def __scrape_job_info(self, job_url:str, cache_path:str=None):
+        """Scrape information from a specific job page.
+
+        Parameters
+        ----------
+        url : str
+            The url to the page with information about the job.
+        cache_path : str, default=None
+            The path to the cache where information should be stored.
+            Information is not cached if not specified.
+
+        Returns
+        -------
+        dict
+            A dict with information about the position at the page.
+
+        Notes
+        -----
+            See README.MD for information about dict formatting.
+        """
+        try: 
+            resp = requests.get(job_url)
+            assert(resp.status_code == 200)
+            soup = BeautifulSoup(resp.content, "html.parser")
+
+            # Get the SEO tags from a position
+            seo_script_tag = soup.find('script', attrs={'type': 'application/ld+json'})
+            if seo_script_tag != None:
+                seo_tags = self.__parse_job_seo_tags(json.loads(seo_script_tag.contents[0]))
+                seo_tags['scraped_url'] =  job_url
+                seo_tags['scrape_successful'] = True
+            else:
+                raise Exception(f"No SEO Tags found at {job_url}")
+        except:
+            seo_tags = {
+                'scraped_url': job_url,
+                'scrape_successful': False
+            }
+        return seo_tags
+            
+        # TODO implement caching. See scraping_urls.ipynb for a start
 
     def close_driver(self):
         """Close the webdriver used by the scraper."""
