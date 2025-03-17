@@ -8,8 +8,9 @@ Here is a list of what I want to work on next.
   - See Selenium docs for info on this
 - Add html parsing to get the jobs themselves.
   - The html that can be scraped currently will have all the needed references for this. (Maybe use soup and requests. Verify if requests is sync or async)
-  - Add pytest tests for code
-    - Specifically start with testing bad args.
+- Add pytest tests for code
+  - Specifically start with testing bad args?
+  - Save several careers pages and test across all of them
 
 ## Bigger/Aspirational Todos
 - Add multithreading to parse html as other pages are scraped.
@@ -18,3 +19,5 @@ Here is a list of what I want to work on next.
 
 ## Other potential additions
 - Language support outside en-US
+- Add scrapers for other sites (Greenhouse, etc...)
+- Add generic scraper for easy custom implementation

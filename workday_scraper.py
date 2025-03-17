@@ -18,10 +18,21 @@ class WorkdayScraper:
         """
         if driver == None:
             # TODO make sure chrome driver works too
-            service = webdriver.FirefoxService()
-            self.__driver = webdriver.Firefox(service=service)
+            self.__driver = self.__init_firefox_driver()
         else:
             self.__driver = driver
+
+    def __init_firefox_driver(self):
+        """Initialize a default firefox driver for the webscraper.
+        
+        Returns
+        -------
+        """
+        options = webdriver.FirefoxOptions()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options)
+        return driver
+
 
     def __get_next_page_class(self, soup:BeautifulSoup):
         """Get the css class of the next button.
