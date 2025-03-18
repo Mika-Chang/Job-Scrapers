@@ -9,7 +9,7 @@ Feel free to use this! (But also try not to be spammy with requests)
   - You can install with `pip install -r requirements.txt`. Be careful, this should probably be done in a venv
 - WebDriver. This will be specific to your browser! You can download here: https://www.selenium.dev/documentation/webdriver/
 
-## Position Information
+## Job Information
 Scraped information about a job will be formatted in JSON with the following information:
   
 - `scraped_url`: `str`
