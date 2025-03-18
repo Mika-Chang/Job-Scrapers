@@ -1,0 +1,11 @@
+LICENSE
+README.md
+pyproject.toml
+src/job-scrape/__init__.py
+src/job-scrape/scrapers.py
+src/job_scrape.egg-info/PKG-INFO
+src/job_scrape.egg-info/SOURCES.txt
+src/job_scrape.egg-info/dependency_links.txt
+src/job_scrape.egg-info/requires.txt
+src/job_scrape.egg-info/top_level.txt
+tests/tests.py

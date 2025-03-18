@@ -23,3 +23,4 @@ Here is a list of what I want to work on next.
 - Language support outside en-US
 - Add scrapers for other sites (Greenhouse, etc...)
 - Add generic scraper for easy custom implementation
+- make a readthedocs.org page
