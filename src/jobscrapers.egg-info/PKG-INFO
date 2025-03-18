@@ -1,5 +1,5 @@
 Metadata-Version: 2.2
-Name: job-scrape
+Name: jobscrapers
 Version: 0.0.2
 Summary: A package to scrape job postings.
 Author-email: Mika <mikacchang@gmail.com>
@@ -11,20 +11,20 @@ Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: beautifulsoup4==4.13.3
+Requires-Dist: bs4>=0.0.2
 Requires-Dist: requests>=2.32.3
 Requires-Dist: selenium>=4.29.0
 
-# job-scrape
+# Job Scrapers
 
-This is a project that can pull jobs from workday careers pages. I'm hoping to eventually set up a program to update me within a day of jobs at companies I want to work at. 
+This is a project that can pull job listing information from careers pages. Currently there is only support for Workday based careers pages with more support coming soon!
 
 Feel free to use this! (But also try not to be spammy with requests)
 
 ## Requirements
-- Required python packages (see requirements.txt)
-  - You can install with `pip install -r requirements.txt`. Be careful, this should probably be done in a venv
-- WebDriver. This will be specific to your browser! You can download here: https://www.selenium.dev/documentation/webdriver/
+
+- Required python packages (Will be installed when installing from the .whl file)
+- WebDriver. This will be specific to your browser. You can download here: https://www.selenium.dev/documentation/webdriver/
 
 ## Job Information
 Scraped information about a job will be formatted in JSON with the following information:
