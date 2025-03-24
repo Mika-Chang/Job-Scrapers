@@ -1,6 +1,6 @@
-Metadata-Version: 2.2
+Metadata-Version: 2.4
 Name: jobscrapers
-Version: 0.0.2
+Version: 0.0.6
 Summary: A package to scrape job postings.
 Author-email: Mika <mikacchang@gmail.com>
 Project-URL: Homepage, https://github.com/Mika-Chang/job-scrape
@@ -11,9 +11,10 @@ Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: bs4>=0.0.2
-Requires-Dist: requests>=2.32.3
-Requires-Dist: selenium>=4.29.0
+Requires-Dist: bs4~=0.0.2
+Requires-Dist: requests~=2.32.3
+Requires-Dist: selenium~=4.29.0
+Dynamic: license-file
 
 # Job Scrapers
 
@@ -27,6 +28,7 @@ Feel free to use this! (But also try not to be spammy with requests)
 - WebDriver. This will be specific to your browser. You can download here: https://www.selenium.dev/documentation/webdriver/
 
 ## Job Information
+
 Scraped information about a job will be formatted in JSON with the following information:
   
 - `scraped_url`: `str`
