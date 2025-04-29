@@ -1,11 +1,14 @@
 import os
 from bs4 import BeautifulSoup
 import json
+import logging
 import re
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
+
+logger = logging.getLogger('jobscrapers')
 
 class WorkdayScraper:
     """Class to scrape a workday careers page."""
@@ -20,6 +23,7 @@ class WorkdayScraper:
         """
         if driver == None:
             # TODO make sure chrome driver works too
+            logger.debug('No driver specified for scraper. Initializing default driver.')
             self.__driver = self.__init_firefox_driver()
         else:
             self.__driver = driver
@@ -98,13 +102,14 @@ class WorkdayScraper:
         cache_path : str, default=None
             The path of the directory to store the scaped html pages.
         """
+        logger.info(f'Scraping {url} for positions.')
         page_count = 0
-
         self.__driver.get(url)
         
         # TODO add error handling
         jobs = []
         while True:
+            logger.info(f'Scraping page {page_count + 1}')
             next_class = None
             time.sleep(3) # TODO implement better wait strategy
             # get page html
@@ -129,8 +134,8 @@ class WorkdayScraper:
             if next_class != '':
                 self.__next_page(next_class)
             else:
-                print("No next button detected. Scraping complete")
-                print(f"Scraped {page_count} pages.")
+                logger.info("No next button detected. Scraping complete")
+                logger.info(f"Scraped {page_count} pages.")
                 break
         
         return jobs
