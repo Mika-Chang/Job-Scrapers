@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: jobscrapers
-Version: 0.0.6
+Version: 0.0.7
 Summary: A package to scrape job postings.
 Author-email: Mika <mikacchang@gmail.com>
 Project-URL: Homepage, https://github.com/Mika-Chang/job-scrape
@@ -49,3 +49,7 @@ Scraped information about a job will be formatted in JSON with the following inf
   - The country where the position will be.
 - `city`: `str`
   - The city where the position will be.
+
+## Logging
+This package makes use of the Logging package for python using a logger with the name `jobscrapers`. By default, events with severity `WARNING` and higher will be printed to `sys.stderr`. Please see the `Logging` documentation for configuring logging for your project. https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
+
